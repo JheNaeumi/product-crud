@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using product_backend.Dto;
 using product_backend.Models;
+using product_backend.Service;
 
 namespace product_backend.Controllers
 {
@@ -10,51 +10,55 @@ namespace product_backend.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly ProductDbContext _productDbContext;
+        private readonly ProductService _productService;
 
-        public ProductController(ProductDbContext productDbContext)
+        public ProductController(ProductService productService)
         {
-            this._productDbContext = productDbContext;
+            _productService = productService;
         }
 
         [HttpPost]
         [Route("CreateProduct")]
-        public async Task<Product> CreateProduct(Product product) {
-
-            _productDbContext.Product.Add(product);
-            await _productDbContext.SaveChangesAsync();
+        public async Task<ActionResult<Product>> CreateProduct(ProductDto productDto) {
+            
+            var product = await _productService.CreateProduct(productDto);
             return product;
+
         }
 
         [HttpGet]
         [Route("GetProducts")]
-        public async Task<IActionResult> GetProducts() {
-            var products = await _productDbContext.Product.ToListAsync();
-            return Ok(products);
+        public async Task<ActionResult<List<Product>>> GetProducts() {
+
+            var products = await _productService.GetProducts();
+            return products;
+          
         }
 
         [HttpPatch]
         [Route("UpdateProduct/{id}")]
-        public async Task<IActionResult> UpdateProduct(Product product) {
-         
-            _productDbContext.Entry(product).State = EntityState.Modified;
-            await _productDbContext.SaveChangesAsync();
-            return Ok(product);
+        public async Task<IActionResult> UpdateProduct(int id, ProductDto productdto) {
+
+            var result = await _productService.UpdateProduct(id, productdto);
+            if (!result) { 
+                
+                return NotFound();
+
+            }
+            return Ok();
         }
 
         [HttpDelete]
         [Route("DeleteProduct/{id}")]
         public async Task<IActionResult> DeleteProduct(int id) {
-            var product = _productDbContext.Product.Find(id);
-            if (product == null)
+
+            var result = await _productService.DeleteProduct(id);
+            if (!result)
             {
                 return NotFound();
             }
-
-            _productDbContext.Product.Remove(product);
-            await _productDbContext.SaveChangesAsync();
-
             return Ok();
+
         }
     }
 }
