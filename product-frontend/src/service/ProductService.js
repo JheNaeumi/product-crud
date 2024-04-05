@@ -7,13 +7,13 @@ export const CreateProduct = (product) => {
 }
 
 export const GetProducts = () => {
-    axios.get(REST_API_BASE_URL +"/GetProducts")
+    return axios.get(REST_API_BASE_URL +"/GetProducts")
 }
 
-export const UpdateProduct = (product, productId) => {
+export const UpdateProduct = (productId, product) => {
     return axios.patch(REST_API_BASE_URL +`/UpdateProduct/${productId}`, product)
 }
 
 export const DeleteProduct = (productId) => {
-    return axios.post(REST_API_BASE_URL +`/DeleteProduct/${productId}`)
+    return axios.delete(REST_API_BASE_URL +`/DeleteProduct/${productId}`)
 }
