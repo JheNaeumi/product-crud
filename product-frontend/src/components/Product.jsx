@@ -16,6 +16,12 @@ const Product = () => {
         //Initially Get all Products
         handleGetProducts();
     }, []);
+    //Function recognize input change
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewProduct({ ...newProduct, [name]: value });
+    };
+
     //Function to Get all existing Products
     const handleGetProducts = () => {
         GetProducts()
@@ -24,11 +30,7 @@ const Product = () => {
             })
             .catch(error => console.error("Error fetching products:", error));
     };
-    //Function recognize input change
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewProduct({ ...newProduct, [name]: value });
-    };
+                    
     //Function to create a new Product
     const handleCreateProduct = () => {
         CreateProduct(newProduct)

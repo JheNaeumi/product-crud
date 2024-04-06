@@ -47,7 +47,7 @@ namespace product_backend.Service
         }   
         public async Task<bool> DeleteProduct(int id) { 
             
-            var product = await _Dbcontext .Product.FindAsync(id);
+            var product = await _Dbcontext.Product.FindAsync(id);
             if (product ==null)
             {
                 return false;
