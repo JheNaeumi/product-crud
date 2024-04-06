@@ -4,7 +4,7 @@ import defaultimage from '../assets/default-product.png'
 
 const Product = () => {
     const [products, setProducts] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    const [PopUpForm, setPopUpForm] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [newProduct, setNewProduct] = useState({
         name: '',
@@ -13,9 +13,10 @@ const Product = () => {
     });
 
     useEffect(() => {
+        //Initially Get all Products
         handleGetProducts();
     }, []);
-
+    //Function to Get all existing Products
     const handleGetProducts = () => {
         GetProducts()
             .then(response => {
@@ -23,30 +24,30 @@ const Product = () => {
             })
             .catch(error => console.error("Error fetching products:", error));
     };
-
+    //Function recognize input change
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewProduct({ ...newProduct, [name]: value });
     };
-
+    //Function to create a new Product
     const handleCreateProduct = () => {
         CreateProduct(newProduct)
             .then(() => {
-                setShowModal(false);
+                setPopUpForm(false);
                 handleGetProducts();
             })
             .catch(error => console.error("Error creating product:", error));
     };
-
+    //Function to update an existing Product
     const handleUpdateProduct = () => {
         UpdateProduct(selectedProduct.id, newProduct)
             .then(() => {
-                setShowModal(false);
+                setPopUpForm(false);
                 handleGetProducts();
             })
             .catch(error => console.error("Error updating product:", error));
     };
-
+    //Function to delete an existing Product
     const handleDeleteProduct = (productId) => {
         DeleteProduct(productId)
             .then(() => {
@@ -54,16 +55,21 @@ const Product = () => {
             })
             .catch(error => console.error("Error deleting product:", error));
     };
-
-    const openUpdateModal = (product) => {
+    //Funtion set mapped_product to newProduct && open PopUpForm
+    const openUpdatePopUpForm = (product) => {
         setSelectedProduct(product);
         setNewProduct({ ...product });
-        setShowModal(true);
+        setPopUpForm(true);
     };
-    const openCreateModal = () => {
+    //Funtion reset newProduct to null && open PopUpForm
+    const openCreatePopUpForm = () => {
       setSelectedProduct(null);
-      setNewProduct('')
-      setShowModal(true);
+      setNewProduct({
+        name: '',
+        description: '',
+        price: 0
+      });
+      setPopUpForm(true);
     };
 
     return (
@@ -71,7 +77,7 @@ const Product = () => {
             <div className=" bg-white p-12">
                 <div className=" grid grid-cols-1 sm:grid-cols-2 py-5">
                   <h2 className=" sm:text-left text-center text-2xl font-bold tracking-tight text-gray-900">Products</h2>
-                  <button className="sm:justify-self-end bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none" onClick={() => {openCreateModal()}} > + Create Product </button>
+                  <button className="sm:justify-self-end bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none" onClick={() => {openCreatePopUpForm()}} > + Create Product </button>
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {products.map((product) => (
@@ -85,7 +91,7 @@ const Product = () => {
                             </div>
                             <p className="text-gray-600 mb-2">{product.description}</p>
                             <div className="flex justify-end mt-4">
-                                <button className="text-blue-500 hover:text-blue-600 mr-2" onClick={() => openUpdateModal(product)}>Edit</button>
+                                <button className="text-blue-500 hover:text-blue-600 mr-2" onClick={() => openUpdatePopUpForm(product)}>Edit</button>
                                 <button className="text-red-500 hover:text-red-600" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                             </div>
                         </div>
@@ -93,14 +99,13 @@ const Product = () => {
                 </div>
                
             </div>
-
-            {/* Modal */}
-            {showModal && (
+            {/*  Form for creating or updating product */}
+            {PopUpForm && (
                 <div className="fixed inset-0 z-10 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                     <div className="bg-white rounded-lg shadow-lg relative w-full max-w-md p-6">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">Product Details</h3>
-                            <button className="text-gray-600 hover:text-gray-700" onClick={() => setShowModal(false)}>
+                            <button className="text-gray-600 hover:text-gray-700" onClick={() => setPopUpForm(false)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -127,7 +132,7 @@ const Product = () => {
                         ) : (
                             <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 mr-2" onClick={handleCreateProduct}>Create</button>
                         )}
-                        <button type="button" className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400" onClick={() => setShowModal(false)}>Cancel</button>
+                        <button type="button" className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400" onClick={() => setPopUpForm(false)}>Cancel</button>
                       </div>
                       </form>
                     </div>
